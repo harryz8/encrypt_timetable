@@ -19,7 +19,7 @@ def main(input_file, password):
         data = f.read()
     fernet = Fernet(key)
     ciphertext = fernet.encrypt(data)
-    with open("./timtable_enc.json", "w") as file:
+    with open("./timetable_enc.json", "w") as file:
         file.write(json.dumps({
             "salt": salt.hex(),
             "iterations": 600000,
