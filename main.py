@@ -7,14 +7,16 @@ import json
 from base64 import urlsafe_b64encode
 
 def main(input_file, password):
+    iterations = 60000
     salt = os.urandom(16)
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
         salt=salt,
-        iterations = 600000
+        iterations = iterations
     )
     key = urlsafe_b64encode(kdf.derive(bytes(password, 'UTF-8')))
+    print(f"key: {key}")
     with open(input_file, "rb") as f:
         data = f.read()
     fernet = Fernet(key)
@@ -22,7 +24,7 @@ def main(input_file, password):
     with open("./timetable_enc.json", "w") as file:
         file.write(json.dumps({
             "salt": salt.hex(),
-            "iterations": 600000,
+            "iterations": iterations,
             "key_algorithm": "pbkdf2-sha256",
             "ciphertext": ciphertext.hex(),
             "ciphertext_algorithm": "fernet"
