@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 import sys
 import os
 import json
-from base64 import urlsafe_b64encode
+from base64 import urlsafe_b64decode, urlsafe_b64encode
 
 def main(input_file, password):
     iterations = 60000
@@ -21,12 +21,13 @@ def main(input_file, password):
         data = f.read()
     fernet = Fernet(key)
     ciphertext = fernet.encrypt(data)
+    raw_ciphertext = urlsafe_b64decode(ciphertext)
     with open("./timetable_enc.json", "w") as file:
         file.write(json.dumps({
             "salt": salt.hex(),
             "iterations": iterations,
             "key_algorithm": "pbkdf2-sha256",
-            "ciphertext": ciphertext.hex(),
+            "ciphertext": raw_ciphertext.hex(),
             "ciphertext_algorithm": "fernet"
         }))
 
